@@ -1,0 +1,3 @@
+rootProject.name = 'ReactNativeChatbot'
+
+include ':app'
