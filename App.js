@@ -1,5 +1,13 @@
 import React from "react";
-import { StyleSheet, Text, View, Image, Button, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Button,
+  TextInput,
+  Alert
+} from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
 import {
   createStackNavigator,
@@ -142,6 +150,13 @@ class ProductDetailScreen extends React.Component {
     navigation.navigate("Payment", {
       closeModal: navigation.getParam("closeModal")
     });
+  }
+  componentDidMount() {
+    const { navigation } = this.props;
+    Alert.alert(
+      navigation.getParam("product").title,
+      "Produk ini harganya: " + navigation.getParam("product").price
+    );
   }
   static navigationOptions = ({ navigation }) => ({
     headerTitle: navigation.getParam("product").title,
