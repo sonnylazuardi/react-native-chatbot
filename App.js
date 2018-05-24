@@ -192,10 +192,6 @@ class PaymentScreen extends React.Component {
     headerTitle: "Payment"
   });
   render() {
-    const { navigation } = this.props;
-    const title = navigation.getParam("title");
-    const price = navigation.getParam("price");
-    const image = navigation.getParam("image");
     return (
       <View style={{ flex: 1 }}>
         <Text>Insert Credit Card</Text>
