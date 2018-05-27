@@ -6,15 +6,20 @@ import {
   Image,
   Button,
   TextInput,
-  Alert
+  Alert,
+  Modal
 } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
-import { StackActions, NavigationActions } from "react-navigation";
+import { NavigationActions, StackNavigator } from "react-navigation";
+import PaymentScreen from "../screens/PaymentScreen";
+import ProductDetailScreen from "../screens/ProductDetailScreen";
 import PRODUCTS from "../data/products";
 
 export default class ChatScreen extends React.Component {
+  navigator;
   state = {
-    messages: []
+    messages: [],
+    showModal: false
   };
 
   componentWillMount() {
@@ -33,7 +38,7 @@ export default class ChatScreen extends React.Component {
             title: PRODUCTS[0].title,
             menus: [
               {
-                title: "Detail Produk",
+                title: "Bayar",
                 action: () => this.onSelectProduct(PRODUCTS[0])
               },
               {
@@ -58,22 +63,24 @@ export default class ChatScreen extends React.Component {
   }
 
   onSelectProduct(product) {
-    const { navigation } = this.props;
-    navigation.navigate({
-      key: "Modal",
-      routeName: "Modal",
-      action: NavigationActions.navigate({
-        key: "ProductDetail",
-        routeName: "ProductDetail",
-        params: {
-          product,
-          closeModal: () => {
-            navigation.dispatch(StackActions.popToTop());
-            navigation.dispatch(StackActions.popToTop());
-          }
-        }
-      })
-    });
+    this.setState(
+      {
+        showModal: true
+      },
+      () => {
+        this.navigator &&
+          this.navigator.dispatch(
+            NavigationActions.navigate({
+              key: "Payment",
+              routeName: "Payment",
+              params: {
+                product,
+                closeModal: () => this.onCloseModal()
+              }
+            })
+          );
+      }
+    );
   }
 
   onBuyProduct(product) {
@@ -98,23 +105,66 @@ export default class ChatScreen extends React.Component {
     return null;
   }
 
+  onCloseModal() {
+    this.setState({
+      showModal: false
+    });
+  }
+
   onSend(messages = []) {
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages)
     }));
   }
 
+  stackNavigator = StackNavigator(
+    {
+      Payment: PaymentScreen,
+      ProductDetail: ProductDetailScreen
+    },
+    {
+      initialRouteName: "ProductDetail",
+      initialRouteParams: {
+        product: {},
+        closeModal: () => this.onCloseModal()
+      }
+    }
+  );
+
+  renderModal() {
+    const Navigator = this.stackNavigator;
+    return (
+      <Modal
+        style={{ flex: 1 }}
+        visible={this.state.showModal}
+        animationType="slide"
+        transparent={false}
+        onShow={() => {
+          Alert.alert(
+            "Perhatian",
+            "Informasi kartu kredit anda tidak di simpan oleh e-commerce"
+          );
+        }}
+      >
+        <Navigator ref={navigator => (this.navigator = navigator)} />
+      </Modal>
+    );
+  }
+
   render() {
     return (
-      <GiftedChat
-        style={{ flex: 1 }}
-        messages={this.state.messages}
-        onSend={messages => this.onSend(messages)}
-        renderCustomView={this.onRenderCustomView.bind(this)}
-        user={{
-          _id: 1
-        }}
-      />
+      <View style={{ flex: 1 }}>
+        <GiftedChat
+          style={{ flex: 1 }}
+          messages={this.state.messages}
+          onSend={messages => this.onSend(messages)}
+          renderCustomView={this.onRenderCustomView.bind(this)}
+          user={{
+            _id: 1
+          }}
+        />
+        {this.renderModal()}
+      </View>
     );
   }
 }

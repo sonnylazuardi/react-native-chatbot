@@ -16,21 +16,21 @@ export default class ProductDetailScreen extends React.Component {
       closeModal: navigation.getParam("closeModal")
     });
   }
-  componentDidMount() {
-    const { navigation } = this.props;
-    Alert.alert(
-      navigation.getParam("product").title,
-      "Produk ini harganya: " + navigation.getParam("product").price
-    );
-  }
+  // componentDidMount() {
+  //   const { navigation } = this.props;
+  //   Alert.alert(
+  //     navigation.getParam("product").title,
+  //     "Produk ini harganya: " + navigation.getParam("product").price
+  //   );
+  // }
   static navigationOptions = ({ navigation }) => ({
-    headerTitle: navigation.getParam("product").title,
-    headerLeft: (
-      <Button
-        title="Close"
-        onPress={() => navigation.getParam("closeModal")()}
-      />
-    )
+    headerTitle: navigation.getParam("product").title
+    // headerLeft: (
+    //   <Button
+    //     title="Close"
+    //     onPress={() => navigation.getParam("closeModal")()}
+    //   />
+    // )
   });
   render() {
     const { navigation } = this.props;
